@@ -1,0 +1,101 @@
+{
+  "name": "work-life-manager",
+  "version": "0.3.2",
+  "description": "本地与多用户工作生活管理工具，包含计划、日历、提醒、Android 和桌面版。",
+  "author": "CoolDa",
+  "private": true,
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "cap:sync": "npm run build && cap sync android",
+    "android:build": "npm run cap:sync && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1",
+    "start": "node scripts/launch.mjs",
+    "server": "node server/index.js --no-open",
+    "test": "node --test tests/*.test.js",
+    "visual-check": "node scripts/visual-check.mjs",
+    "e2e-check": "node scripts/e2e-check.mjs",
+    "mobile-check": "node scripts/mobile-check.mjs",
+    "sync-check": "node scripts/sync-check.mjs",
+    "android-check": "node scripts/android-device-check.mjs",
+    "android-sync-check": "node scripts/android-sync-check.mjs",
+    "android-cloud-check": "node scripts/android-cloud-check.mjs",
+    "cloud-auth-check": "node scripts/cloud-auth-check.mjs",
+    "guest-check": "node scripts/guest-check.mjs",
+    "cloud:dev": "wrangler pages dev dist --port 8788 --persist-to=.wrangler/state",
+    "cloud:deploy": "npm run build && wrangler pages deploy dist --project-name rixu-app --branch main",
+    "cloud:db:init": "wrangler d1 execute rixu-db --remote --file=cloud/schema.sql",
+    "desktop:dev": "npm run build && electron .",
+    "desktop:icon": "python scripts/generate-desktop-icon.py",
+    "desktop:build": "npm run desktop:icon && npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-desktop.ps1",
+    "desktop:build:installer": "npm run desktop:icon && npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-desktop.ps1 -Target installer",
+    "desktop:build:portable": "npm run desktop:icon && npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-desktop.ps1 -Target portable"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/local-notifications": "^8.3.1",
+    "lucide-react": "^0.468.0",
+    "node-notifier": "^10.0.1",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.0",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.3",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^39.0.0",
+    "electron-builder": "^26.0.12",
+    "playwright-core": "^1.65.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "wrangler": "^4.158.0"
+  },
+  "build": {
+    "appId": "com.local.worklife",
+    "productName": "日序",
+    "asar": false,
+    "directories": {
+      "output": "release-desktop",
+      "buildResources": "electron/build"
+    },
+    "files": [
+      "dist/**/*",
+      "server/**/*",
+      "public/**/*",
+      "electron/**/*",
+      "package.json"
+    ],
+    "win": {
+      "icon": "electron/build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "日序"
+    },
+    "artifactName": "日序-Desktop-${version}-${arch}.${ext}"
+  }
+}

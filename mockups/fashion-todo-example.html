@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>日序 · 时尚 Todo 清单示例</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family:
+          "Segoe UI Variable", "Microsoft YaHei UI", "PingFang SC",
+          sans-serif;
+        color: #171917;
+        background: #efeee9;
+        --ink: #171917;
+        --muted: #737771;
+        --faint: #a0a39d;
+        --line: #e8e8e3;
+        --paper: #ffffff;
+        --lime: #d7f45d;
+        --blue: #5f87ef;
+        --coral: #ef806f;
+        --green: #67a37f;
+        --amber: #d79a44;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 1100px;
+        min-height: 100vh;
+        padding: 28px;
+        background: #efeee9;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .app {
+        display: grid;
+        grid-template-columns: 214px minmax(0, 1fr);
+        width: min(1360px, 100%);
+        min-height: calc(100vh - 56px);
+        margin: 0 auto;
+        overflow: hidden;
+        background: var(--paper);
+        border: 1px solid #dfdfd8;
+        border-radius: 10px;
+        box-shadow: 0 18px 50px rgba(30, 33, 28, 0.08);
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        padding: 23px 17px 17px;
+        background: #f5f4ef;
+        border-right: 1px solid #e6e5df;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 7px 28px;
+      }
+
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 35px;
+        height: 35px;
+        color: var(--lime);
+        background: var(--ink);
+        border-radius: 8px;
+      }
+
+      .brand-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+      }
+
+      .brand-copy strong {
+        font-size: 17px;
+      }
+
+      .brand-copy span {
+        color: #9a9d96;
+        font-size: 8px;
+        font-weight: 700;
+      }
+
+      .nav-label {
+        padding: 0 11px 8px;
+        color: #a1a49d;
+        font-size: 10px;
+        font-weight: 650;
+      }
+
+      .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 40px;
+        padding: 8px 11px;
+        color: #666b65;
+        font-size: 13px;
+        background: transparent;
+        border: 0;
+        border-radius: 7px;
+        text-align: left;
+      }
+
+      .nav-item svg {
+        width: 17px;
+        height: 17px;
+        stroke-width: 1.8;
+      }
+
+      .nav-item.active {
+        color: #f7f8f5;
+        background: var(--ink);
+      }
+
+      .nav-item.active svg {
+        color: var(--lime);
+      }
+
+      .sidebar-bottom {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: auto;
+      }
+
+      .local-chip {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        color: #5f6860;
+        font-size: 10px;
+        background: #ebece5;
+        border-radius: 7px;
+      }
+
+      .local-dot {
+        width: 7px;
+        height: 7px;
+        background: #6db889;
+        border-radius: 50%;
+        box-shadow: 0 0 0 4px rgba(109, 184, 137, 0.13);
+      }
+
+      .main {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        padding: 28px 34px 34px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+        padding-bottom: 26px;
+      }
+
+      .date {
+        margin: 0 0 5px;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 42px;
+        font-weight: 650;
+        line-height: 1.08;
+      }
+
+      .headline-note {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+
+      .icon-btn,
+      .add-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 39px;
+        border: 1px solid #dedfd9;
+        border-radius: 7px;
+        background: #fff;
+      }
+
+      .icon-btn {
+        width: 39px;
+        color: #646963;
+      }
+
+      .icon-btn svg {
+        width: 17px;
+        height: 17px;
+        stroke-width: 1.8;
+      }
+
+      .add-btn {
+        gap: 7px;
+        padding: 0 15px;
+        color: var(--ink);
+        font-size: 12px;
+        font-weight: 650;
+        background: var(--lime);
+        border-color: var(--lime);
+      }
+
+      .add-btn svg {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: minmax(0, 1.65fr) minmax(270px, 0.7fr);
+        gap: 26px;
+        min-height: 0;
+        flex: 1;
+      }
+
+      .list-panel {
+        min-width: 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 12px;
+      }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: 14px;
+      }
+
+      .section-head span {
+        color: var(--faint);
+        font-size: 10px;
+      }
+
+      .filters {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 0 16px;
+      }
+
+      .filter {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        height: 29px;
+        padding: 0 9px;
+        color: #858a83;
+        font-size: 10px;
+        background: #fff;
+        border: 1px solid #e4e5df;
+        border-radius: 5px;
+      }
+
+      .filter.active {
+        color: #f8faf6;
+        background: var(--ink);
+        border-color: var(--ink);
+      }
+
+      .filter-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+      }
+
+      .task-list {
+        border-top: 1px solid var(--line);
+      }
+
+      .task {
+        display: grid;
+        grid-template-columns: 46px 12px minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 13px;
+        min-height: 69px;
+        padding: 10px 4px 10px 1px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .task-time {
+        color: #343833;
+        font-size: 12px;
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .task-marker {
+        width: 5px;
+        height: 5px;
+        margin-left: 2px;
+        border-radius: 50%;
+      }
+
+      .task-body {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .task-title-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .task-title {
+        overflow: hidden;
+        color: #232622;
+        font-size: 14px;
+        font-weight: 620;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .pill {
+        padding: 2px 6px;
+        color: #4f554d;
+        font-size: 8px;
+        font-weight: 650;
+        background: #f3f3ef;
+        border-radius: 4px;
+      }
+
+      .task-detail {
+        overflow: hidden;
+        color: #969b94;
+        font-size: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .task-end {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #b1b4af;
+      }
+
+      .task-end svg {
+        width: 14px;
+        height: 14px;
+        stroke-width: 1.8;
+      }
+
+      .task-duration {
+        color: #9ca19a;
+        font-size: 9px;
+        white-space: nowrap;
+      }
+
+      .right-rail {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .memo {
+        min-height: 215px;
+        padding: 17px;
+        background: #f7f7f3;
+        border: 1px solid #e9e9e3;
+        border-radius: 8px;
+      }
+
+      .memo-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 13px;
+      }
+
+      .memo-head strong {
+        font-size: 12px;
+      }
+
+      .memo-head span {
+        color: #9ca19a;
+        font-size: 9px;
+      }
+
+      .memo p {
+        margin: 0;
+        color: #697068;
+        font-size: 12px;
+        line-height: 1.85;
+      }
+
+      .memo-rule {
+        width: 38px;
+        height: 2px;
+        margin: 20px 0 0;
+        background: var(--lime);
+      }
+
+      .week {
+        padding: 17px;
+        border: 1px solid #e9e9e3;
+        border-radius: 8px;
+      }
+
+      .week-head {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .week-head strong {
+        font-size: 12px;
+      }
+
+      .week-head span {
+        color: #a0a49d;
+        font-size: 9px;
+      }
+
+      .week-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        align-items: end;
+        height: 76px;
+      }
+
+      .day {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 7px;
+        height: 100%;
+      }
+
+      .day-bar {
+        width: 9px;
+        min-height: 8px;
+        background: #e6e7e1;
+        border-radius: 99px;
+      }
+
+      .day:nth-child(1) .day-bar {
+        height: 34px;
+      }
+
+      .day:nth-child(2) .day-bar {
+        height: 48px;
+        background: #bec9f6;
+      }
+
+      .day:nth-child(3) .day-bar {
+        height: 24px;
+      }
+
+      .day:nth-child(4) .day-bar {
+        height: 61px;
+        background: #f4c1b8;
+      }
+
+      .day:nth-child(5) .day-bar {
+        height: 43px;
+        background: var(--lime);
+      }
+
+      .day:nth-child(6) .day-bar {
+        height: 20px;
+      }
+
+      .day:nth-child(7) .day-bar {
+        height: 52px;
+        background: #bfe3cc;
+      }
+
+      .day span {
+        color: #a4a8a1;
+        font-size: 8px;
+      }
+
+      .shortcuts {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .shortcut {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 39px;
+        padding: 8px 9px;
+        color: #60665e;
+        font-size: 10px;
+        background: #fff;
+        border: 1px solid #e9e9e3;
+        border-radius: 6px;
+      }
+
+      .shortcut svg {
+        width: 15px;
+        height: 15px;
+        stroke-width: 1.8;
+      }
+
+      .blue {
+        color: var(--blue);
+        background: var(--blue);
+      }
+
+      .coral {
+        color: var(--coral);
+        background: var(--coral);
+      }
+
+      .green {
+        color: var(--green);
+        background: var(--green);
+      }
+
+      .amber {
+        color: var(--amber);
+        background: var(--amber);
+      }
+
+      .svg-symbols {
+        position: absolute;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <svg class="svg-symbols" aria-hidden="true">
+      <symbol id="i-grid" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+        <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+        <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+      </symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+        <path d="M16 3v4M8 3v4M3 10h18"></path>
+      </symbol>
+      <symbol id="i-book" viewBox="0 0 24 24">
+        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"></path>
+      </symbol>
+      <symbol id="i-dumbbell" viewBox="0 0 24 24">
+        <path d="m6.5 6.5 11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M7 21l14-14"></path>
+      </symbol>
+      <symbol id="i-utensils" viewBox="0 0 24 24">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"></path>
+      </symbol>
+      <symbol id="i-game" viewBox="0 0 24 24">
+        <line x1="6" x2="10" y1="11" y2="11"></line>
+        <line x1="8" x2="8" y1="9" y2="13"></line>
+        <line x1="15" x2="15.01" y1="12" y2="12"></line>
+        <line x1="18" x2="18.01" y1="10" y2="10"></line>
+        <path d="M17.32 5H6.68a4 4 0 0 0-3.98 3.59l-.6 5A3 3 0 0 0 5 17a3 3 0 0 0 2.6-1.5L8.5 14h7l.9 1.5A3 3 0 0 0 19 17a3 3 0 0 0 2.9-3.41l-.6-5A4 4 0 0 0 17.32 5Z"></path>
+      </symbol>
+      <symbol id="i-database" viewBox="0 0 24 24">
+        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+        <path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"></path>
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14"></path>
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="7"></circle>
+        <path d="m20 20-4-4"></path>
+      </symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24">
+        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"></path>
+      </symbol>
+      <symbol id="i-more" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1"></circle>
+        <circle cx="12" cy="12" r="1"></circle>
+        <circle cx="19" cy="12" r="1"></circle>
+      </symbol>
+      <symbol id="i-rows" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16"></path>
+      </symbol>
+    </svg>
+
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">
+            <svg width="20" height="20" fill="none" stroke="currentColor">
+              <use href="#i-rows"></use>
+            </svg>
+          </div>
+          <div class="brand-copy">
+            <strong>日序</strong>
+            <span>WORK / LIFE</span>
+          </div>
+        </div>
+
+        <div class="nav-label">工作台</div>
+        <nav class="nav">
+          <button class="nav-item active">
+            <svg fill="none" stroke="currentColor"><use href="#i-grid"></use></svg>
+            首页总览
+          </button>
+          <button class="nav-item">
+            <svg fill="none" stroke="currentColor"><use href="#i-calendar"></use></svg>
+            今日计划
+          </button>
+          <button class="nav-item">
+            <svg fill="none" stroke="currentColor"><use href="#i-book"></use></svg>
+            学习计划
+          </button>
+          <button class="nav-item">
+            <svg fill="none" stroke="currentColor"><use href="#i-dumbbell"></use></svg>
+            健身计划
+          </button>
+          <button class="nav-item">
+            <svg fill="none" stroke="currentColor"><use href="#i-utensils"></use></svg>
+            饮食计划
+          </button>
+          <button class="nav-item">
+            <svg fill="none" stroke="currentColor"><use href="#i-game"></use></svg>
+            游戏娱乐
+          </button>
+          <button class="nav-item">
+            <svg fill="none" stroke="currentColor"><use href="#i-database"></use></svg>
+            数据与设置
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="local-chip">
+            <span class="local-dot"></span>
+            本地服务运行中
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="date">11月6日，星期五</p>
+            <h1>今天</h1>
+            <p class="headline-note">6 项安排 · 计划用时 6 小时</p>
+          </div>
+          <div class="top-actions">
+            <button class="icon-btn" aria-label="搜索">
+              <svg fill="none" stroke="currentColor"><use href="#i-search"></use></svg>
+            </button>
+            <button class="add-btn">
+              <svg fill="none" stroke="currentColor"><use href="#i-plus"></use></svg>
+              新建计划
+            </button>
+          </div>
+        </header>
+
+        <div class="content">
+          <section class="list-panel">
+            <div class="section-head">
+              <h2>今日清单</h2>
+              <span>按时间排序</span>
+            </div>
+
+            <div class="filters">
+              <button class="filter active">全部 6</button>
+              <button class="filter"><i class="filter-dot blue"></i>学习 1</button>
+              <button class="filter"><i class="filter-dot coral"></i>健身 1</button>
+              <button class="filter"><i class="filter-dot green"></i>饮食 3</button>
+              <button class="filter"><i class="filter-dot amber"></i>娱乐 1</button>
+            </div>
+
+            <div class="task-list">
+              <article class="task">
+                <span class="task-time">08:00</span>
+                <i class="task-marker green"></i>
+                <div class="task-body">
+                  <div class="task-title-line">
+                    <span class="task-title">燕麦、鸡蛋和牛奶</span>
+                    <span class="pill">早餐</span>
+                  </div>
+                  <span class="task-detail">饮食计划 · 一份</span>
+                </div>
+                <div class="task-end">
+                  <span class="task-duration">30 分钟</span>
+                  <svg fill="none" stroke="currentColor"><use href="#i-bell"></use></svg>
+                  <svg fill="none" stroke="currentColor"><use href="#i-more"></use></svg>
+                </div>
+              </article>
+
+              <article class="task">
+                <span class="task-time">09:30</span>
+                <i class="task-marker blue"></i>
+                <div class="task-body">
+                  <div class="task-title-line">
+                    <span class="task-title">TypeScript 类型系统</span>
+                    <span class="pill">学习</span>
+                  </div>
+                  <span class="task-detail">前端进阶 · 泛型与条件类型</span>
+                </div>
+                <div class="task-end">
+                  <span class="task-duration">1 小时 30 分</span>
+                  <svg fill="none" stroke="currentColor"><use href="#i-bell"></use></svg>
+                  <svg fill="none" stroke="currentColor"><use href="#i-more"></use></svg>
+                </div>
+              </article>
+
+              <article class="task">
+                <span class="task-time">12:00</span>
+                <i class="task-marker green"></i>
+                <div class="task-body">
+                  <div class="task-title-line">
+                    <span class="task-title">鸡胸肉配时蔬</span>
+                    <span class="pill">午餐</span>
+                  </div>
+                  <span class="task-detail">饮食计划 · 一大份</span>
+                </div>
+                <div class="task-end">
+                  <span class="task-duration">45 分钟</span>
+                  <svg fill="none" stroke="currentColor"><use href="#i-bell"></use></svg>
+                  <svg fill="none" stroke="currentColor"><use href="#i-more"></use></svg>
+                </div>
+              </article>
+
+              <article class="task">
+                <span class="task-time">18:30</span>
+                <i class="task-marker coral"></i>
+                <div class="task-body">
+                  <div class="task-title-line">
+                    <span class="task-title">上肢力量训练</span>
+                    <span class="pill">健身</span>
+                  </div>
+                  <span class="task-detail">胸肩三头 · 卧推 / 推举 / 下压</span>
+                </div>
+                <div class="task-end">
+                  <span class="task-duration">1 小时</span>
+                  <svg fill="none" stroke="currentColor"><use href="#i-bell"></use></svg>
+                  <svg fill="none" stroke="currentColor"><use href="#i-more"></use></svg>
+                </div>
+              </article>
+
+              <article class="task">
+                <span class="task-time">18:30</span>
+                <i class="task-marker green"></i>
+                <div class="task-body">
+                  <div class="task-title-line">
+                    <span class="task-title">番茄牛肉面</span>
+                    <span class="pill">晚餐</span>
+                  </div>
+                  <span class="task-detail">饮食计划 · 一份</span>
+                </div>
+                <div class="task-end">
+                  <span class="task-duration">45 分钟</span>
+                  <svg fill="none" stroke="currentColor"><use href="#i-bell"></use></svg>
+                  <svg fill="none" stroke="currentColor"><use href="#i-more"></use></svg>
+                </div>
+              </article>
+
+              <article class="task">
+                <span class="task-time">21:00</span>
+                <i class="task-marker amber"></i>
+                <div class="task-body">
+                  <div class="task-title-line">
+                    <span class="task-title">探索雾之峡谷</span>
+                    <span class="pill">娱乐</span>
+                  </div>
+                  <span class="task-detail">空洞骑士 · 探索新区域</span>
+                </div>
+                <div class="task-end">
+                  <span class="task-duration">1 小时 30 分</span>
+                  <svg fill="none" stroke="currentColor"><use href="#i-bell"></use></svg>
+                  <svg fill="none" stroke="currentColor"><use href="#i-more"></use></svg>
+                </div>
+              </article>
+            </div>
+          </section>
+
+          <aside class="right-rail">
+            <section class="memo">
+              <div class="memo-head">
+                <strong>快速备忘</strong>
+                <span>已保存</span>
+              </div>
+              <p>
+                周末前完成本周开发记录；<br />
+                买牛奶和咖啡豆；<br />
+                预约下周体检。
+              </p>
+              <div class="memo-rule"></div>
+            </section>
+
+            <section class="week">
+              <div class="week-head">
+                <strong>本周节奏</strong>
+                <span>5 项完成</span>
+              </div>
+              <div class="week-days">
+                <div class="day"><i class="day-bar"></i><span>一</span></div>
+                <div class="day"><i class="day-bar"></i><span>二</span></div>
+                <div class="day"><i class="day-bar"></i><span>三</span></div>
+                <div class="day"><i class="day-bar"></i><span>四</span></div>
+                <div class="day"><i class="day-bar"></i><span>五</span></div>
+                <div class="day"><i class="day-bar"></i><span>六</span></div>
+                <div class="day"><i class="day-bar"></i><span>日</span></div>
+              </div>
+            </section>
+
+            <section class="shortcuts">
+              <div class="shortcut">
+                <svg class="blue" fill="none" stroke="currentColor"><use href="#i-book"></use></svg>
+                学习
+              </div>
+              <div class="shortcut">
+                <svg class="coral" fill="none" stroke="currentColor"><use href="#i-dumbbell"></use></svg>
+                健身
+              </div>
+              <div class="shortcut">
+                <svg class="green" fill="none" stroke="currentColor"><use href="#i-utensils"></use></svg>
+                饮食
+              </div>
+              <div class="shortcut">
+                <svg class="amber" fill="none" stroke="currentColor"><use href="#i-game"></use></svg>
+                娱乐
+              </div>
+            </section>
+          </aside>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

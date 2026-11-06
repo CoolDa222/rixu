@@ -1,0 +1,8 @@
+name = "rixu-app"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-11-06"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "rixu-db"
+database_id = "3e589e9c-c457-49e5-865e-353cbef51a1e"
